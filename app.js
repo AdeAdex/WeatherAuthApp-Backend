@@ -39,7 +39,7 @@ app.use("/api", route);
 
 // Index route
 app.get("/", (_req, res) => {
-  successResponse(res, "Welcome to Mubashiru Website", StatusCodes.OK);
+  successResponse(res, "Welcome to Weather API Server Side", StatusCodes.OK);
 });
 
 // Catch 404 errors and forward them to error handler
