@@ -1,0 +1,64 @@
+//  /app.js
+
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import expressSession from "express-session";
+import { StatusCodes } from "http-status-codes";
+import { errorResponse, successResponse } from "./utils/lib/response.lib.js";
+import cookieParser from 'cookie-parser';
+import route from "./route/index.js";
+
+
+const app = express();
+
+
+const corsOptions = {
+  origin: ["http://localhost:5173"], // Update with your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+};
+
+// use middlewares
+app.use(cors(corsOptions)); // Enable Cross-Origin Resource Sharing
+app.use(morgan("dev"));  // Log HTTP requests to console for development
+app.use(express.json());  // Parse incoming JSON requests
+app.use(express.urlencoded({ extended: true }));   // Parse URL-encoded requests
+app.use(expressSession({  // Initialize Express session
+  secret: 'secretKey',
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Parse cookies
+app.use(cookieParser());
+
+
+// Define API routes
+app.use("/api", route);
+
+
+// index route
+app.get("/", (_req, res) => {
+  successResponse(res, "Welcome to Mubashiru Website", StatusCodes.OK);
+});
+
+// catch 404 errors and forward them to error handler
+app.use((_req, _res, next) => {
+  const error = new Error("Not Found");
+  error.status = StatusCodes.NOT_FOUND;
+  next(error);
+});
+
+// error handler function
+app.use((error, _req, res, _next) => {
+  res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
+});
+
+export default app;
