@@ -36,6 +36,8 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   city: { type: String, required: true },
   password: { type: String, required: true },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   weatherData: WeatherDataSchema,
 });
 
