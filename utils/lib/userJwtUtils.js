@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
  */
 
 export const generateToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LASTED_FOR });
 };
 
 
@@ -27,7 +27,7 @@ export const generateToken = (payload) => {
 
 export const verifyAuthToken = (token) => {
   try {
-    const decodedToken = jwt.verify(token, secretKey);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     return decodedToken;
   } catch (error) {
     return null; // Token verification failed
