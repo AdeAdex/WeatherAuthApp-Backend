@@ -19,9 +19,12 @@ userRouter.post("/forgot-password", forgotPassword);
 // Route to verify the reset password token (using GET, since it's a verification step)
 userRouter.get("/verify-reset-password-token", verifyResetPasswordToken);
 
+// Route to reset the password
 userRouter.post("/reset-password", resetPassword);
 
+// Route to get user dashboard data
 userRouter.get("/dashboard", getDashboardData);
+
 
 
 export default userRouter;
