@@ -6,6 +6,12 @@ config();
 
 const mongoose_URI = process.env.DB_URI;
 
+// Ensure DB_URI is defined
+if (!mongoose_URI) {
+  console.error("Error: DB_URI environment variable is not defined.");
+  process.exit(1); // Exit process with failure code
+}
+
 const connectDB = async () => {
   try {
     await mongoose.connect(mongoose_URI, {
