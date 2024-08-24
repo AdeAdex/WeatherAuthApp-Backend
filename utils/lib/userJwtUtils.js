@@ -25,9 +25,11 @@ export const generateToken = (payload) => {
 //  * @returns {Object|null} The decoded payload if the token is valid, null otherwise.
 //  */
 
-export const verifyAuthToken = (token) => {
+export const verifyToken = (token) => {
+        // console.log(" jwt token", token)
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+//     console.log("jwt decodedToken", decodedToken)
     return decodedToken;
   } catch (error) {
     return null; // Token verification failed
