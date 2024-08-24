@@ -38,9 +38,19 @@ app.use(
 app.use("/api", route);
 
 // Index route
+// Index route
 app.get("/", (_req, res) => {
-  successResponse(res, "Welcome to Weather API Server Side", StatusCodes.OK);
+  const responseMessage = `
+    Welcome to the Weather API Server.
+    Version: ${process.env.APP_VERSION || "1.0.0"}
+    Environment: ${process.env.NODE_ENV || "development"}
+    This API provides weather data and forecasts for various locations.
+    Developed by Adex.
+    Please refer to the documentation for available endpoints and usage.
+  `;
+  successResponse(res, responseMessage, StatusCodes.OK);
 });
+
 
 // Catch 404 errors and forward them to error handler
 app.use((_req, _res, next) => {

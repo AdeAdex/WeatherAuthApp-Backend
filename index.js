@@ -6,6 +6,8 @@ import app from "./app.js";
 import connectDB from "./config/database.config.js";
 
 const PORT = process.env.PORT || 5500;
+const ENV = process.env.NODE_ENV || "development";
+const APP_VERSION = process.env.APP_VERSION || "1.0.0";
 
 const server = http.createServer(app);
 
@@ -17,6 +19,10 @@ const startServer = async () => {
     // Start server
     server.listen(PORT, () => {
       console.log(`🟢 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${ENV}`);
+      console.log(`📦 Version: ${APP_VERSION}`);
+      console.log(`🚀 Welcome to Weather API Server Side`);
+      console.log(`🎯 Ready to handle requests`);
     });
   } catch (error) {
     console.error(`🔴 Server connection failed: ${error.message}`);
