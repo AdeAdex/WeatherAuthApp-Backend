@@ -18,12 +18,12 @@ export const generateToken = (payload) => {
 
 
 
-// /**
-//  * Function to verify JWT token when user is accessing the Dashboard
-//  * Verifies the validity of a JWT token.
-//  * @param {string} token The JWT token to be verified.
-//  * @returns {Object|null} The decoded payload if the token is valid, null otherwise.
-//  */
+/**
+ * Function to verify JWT token when user is accessing the Dashboard
+ * Verifies the validity of a JWT token.
+ * @param {string} token The JWT token to be verified.
+ * @returns {Object|null} The decoded payload if the token is valid, null otherwise.
+ */
 
 export const verifyToken = (token) => {
         // console.log(" jwt token", token)
