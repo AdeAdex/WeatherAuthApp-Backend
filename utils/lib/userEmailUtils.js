@@ -20,19 +20,29 @@ export const sendWelcomeEmail = async (email, firstName) => {
   const mailOptions = {
     from: process.env.USER,
     to: email,
-    subject: "Welcome",
+    subject: "Welcome to Weather App!",
     html: `
-    <div style="background-color: #f2f2f2; padding: 20px; color: #333; border-radius: 10px; font-family: Arial, sans-serif; display: flex; flex-direction: column;">
-        
-        <div style="text-align: center; width: 100%">
-            <p style="font-size: 18px; margin-bottom: 10px; text-align: left;">Hi, ${firstName}!</p>
-           
-            <br>
-            <p style="font-size: 16px; font-weight: bold;">Kind regards,</p>
-            <p style="font-size: 16px; font-weight: bold;">Admin from Weather App.</p>
-        </div>
-</div>
-`,
+    <div style="background-color: #ffffff; padding: 20px; color: #333333; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #1a73e8;">Welcome, ${firstName}!</h1>
+        <p style="font-size: 16px;">We're excited to have you on board. Stay updated with the latest weather information tailored just for you.</p>
+      </div>
+      <div style="text-align: center;">
+        <img src="https://via.placeholder.com/150" alt="Weather App Logo" style="width: 150px; height: auto; margin-bottom: 20px;">
+      </div>
+      <div style="text-align: left;">
+        <p style="font-size: 16px; margin-bottom: 10px;">Thank you for joining us. Here are some tips to get started:</p>
+        <ul style="font-size: 16px; margin-bottom: 20px;">
+          <li>Check the latest weather updates in your area.</li>
+          <li>Set up personalized alerts for severe weather conditions.</li>
+          <li>Explore detailed weather forecasts and trends.</li>
+        </ul>
+        <p style="font-size: 16px; margin-bottom: 20px;">If you have any questions, feel free to reach out to our support team. We're here to help!</p>
+        <p style="font-size: 16px; font-weight: bold;">Best Regards,</p>
+        <p style="font-size: 16px; font-weight: bold;">The Weather App Team</p>
+      </div>
+    </div>
+    `,
   };
 
   return transporter.sendMail(mailOptions);
@@ -51,36 +61,34 @@ export const sendResetPasswordEmail = async (email, resetLink, firstName) => {
     to: email,
     subject: "Password Reset Request",
     html: `
-      <div style="background-color: #f2f2f2; padding: 20px; color: #333; border-radius: 10px; font-family: Arial, sans-serif; display: flex; flex-direction: column;">
-        <div style="text-align: center; width: 100%;">
-          <p style="font-size: 18px; margin-bottom: 10px; text-align: left;">Hi, ${firstName},</p>
-          <p style="font-size: 16px; margin-bottom: 10px; text-align: left;">We received a request to reset your password.</p>
-          <p style="font-size: 16px; margin-bottom: 20px; text-align: left;">
-              Click the button below to reset your password:
-            </p>
-            <a href="${resetLink}" 
-              style="
-                display: inline-block; 
-                background-color: #1a73e8; 
-                color: #ffffff; 
-                padding: 10px 20px; 
-                text-decoration: none; 
-                border-radius: 5px;
-                margin-top: 10px;
-                text-align: center;
-              ">
-              Reset Password
-            </a>
-            <br>
-
-          <p style="font-size: 16px; margin-bottom: 10px; text-align: left;">
-            If you didn't request this, you can safely ignore this email.
-          </p>
-          <br>
-          <p style="font-size: 16px; font-weight: bold;">Kind regards,</p>
-          <p style="font-size: 16px; font-weight: bold;">Admin from Weather App.</p>
-        </div>
+    <div style="background-color: #ffffff; padding: 20px; color: #333333; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #1a73e8;">Reset Your Password</h1>
+        <p style="font-size: 16px;">Hi, ${firstName},</p>
+        <p style="font-size: 16px;">We received a request to reset your password. Click the button below to set a new password:</p>
+        <a href="${resetLink}" 
+          style="
+            display: inline-block; 
+            background-color: #1a73e8; 
+            color: #ffffff; 
+            padding: 12px 24px; 
+            text-decoration: none; 
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+          ">
+          Reset Password
+        </a>
+        <p style="font-size: 16px; margin-top: 20px;">
+          If you didn't request this, you can safely ignore this email. Your password won't be changed.
+        </p>
       </div>
+      <div style="text-align: left; margin-top: 30px;">
+        <p style="font-size: 16px; font-weight: bold;">Best Regards,</p>
+        <p style="font-size: 16px; font-weight: bold;">The Weather App Team</p>
+      </div>
+    </div>
     `,
   };
 
