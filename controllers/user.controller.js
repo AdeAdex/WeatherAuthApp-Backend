@@ -433,43 +433,88 @@ export const resetPassword = async (req, res) => {
 
 
 
+
+
 /**
- * Controller function that monitor search history.
+ * Controller function to save a search term to a user's search history.
  * @param {Object} req The request object.
  * @param {Object} res The response object.
  * @returns {Object} The response object.
  */
+export const saveSearchHistory = async (req, res) => {
+  const { email } = req.params; // Assuming the user's email is passed as a URL parameter
+  const  searchTerm  = req.body.query; // The search term to save
 
-export const searchWeather = tryCatchLib(async (req, res) => {
-  const { email, searchQuery } = req.body;
-  
+ 
+  if (!searchTerm) {
+    return errorResponse(res, "Search term is required", StatusCodes.BAD_REQUEST);
+  }
+
   try {
     // Find the user by email
     const user = await UserModel.findOne({ email });
+
     if (!user) {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
-    // Fetch weather data based on the search query
-    const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(searchQuery)}&appid=${CURRENT_WEATHER_API_KEY}`
-    );
+    // Add the search term and timestamp to the user's search history
+    user.searchHistory.push({
+      query: searchTerm,
+      searchedAt: new Date(), // Automatically sets the current date and time
+    });
 
-    const weatherData = weatherResponse.data;
-
-    // Update the user's search history
-    user.searchHistory.push({ query: searchQuery });
+    // Save the updated user document
     await user.save();
 
-    // Respond with the weather data
     return successResponse(
       res,
-      "Weather data retrieved successfully",
-      weatherData,
+      "Search term saved successfully",
+      { searchHistory: user.searchHistory },
       StatusCodes.OK
     );
   } catch (error) {
-    console.error("Error during weather search:", error);
-    return errorResponse(res, "Failed to retrieve weather data", StatusCodes.INTERNAL_SERVER_ERROR);
+    console.error("Error saving search term:", error);
+    return errorResponse(
+      res,
+      "Failed to save search term",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
   }
-});
+};
+
+
+
+/**
+ * Controller function to get the search history of a user.
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} The response object.
+ */
+export const getSearchHistory = async (req, res) => {
+  const { email } = req.params; // Assuming the user's email is passed as a URL parameter
+
+  try {
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
+    }
+
+    // Return the user's search history
+    return successResponse(
+      res,
+      "Search history retrieved successfully",
+      { searchHistory: user.searchHistory },
+      StatusCodes.OK
+    );
+  } catch (error) {
+    console.error("Error retrieving search history:", error);
+    return errorResponse(
+      res,
+      "Failed to retrieve search history",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};

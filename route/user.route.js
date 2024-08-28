@@ -1,7 +1,7 @@
 // /routes/user.route.js
 
 import { Router } from "express";
-import { createNewUser, forgotPassword, getDashboardData, loginUser, resetPassword, searchWeather, verifyResetPasswordToken } from "../controllers/user.controller.js";
+import { createNewUser, forgotPassword, getDashboardData, getSearchHistory, loginUser, resetPassword, saveSearchHistory, verifyResetPasswordToken } from "../controllers/user.controller.js";
 import { createUserValidation, loginValidation } from "../validators/userValidators.js";
 
 
@@ -25,7 +25,11 @@ userRouter.post("/reset-password", resetPassword);
 // Route to get user dashboard data
 userRouter.get("/dashboard", getDashboardData);
 
-userRouter.post("/search", searchWeather);
+// Route to get a user's search history
+userRouter.get("/search-history/:email", getSearchHistory);
+
+// Route to save a search term to a user's search history
+userRouter.post("/search-history/:email", saveSearchHistory);
 
 
 
