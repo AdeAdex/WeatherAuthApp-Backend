@@ -1,7 +1,7 @@
 // /routes/user.route.js
 
 import { Router } from "express";
-import { createNewUser, forgotPassword, getDashboardData, loginUser, resetPassword, verifyResetPasswordToken } from "../controllers/user.controller.js";
+import { createNewUser, forgotPassword, getDashboardData, loginUser, resetPassword, searchWeather, verifyResetPasswordToken } from "../controllers/user.controller.js";
 import { createUserValidation, loginValidation } from "../validators/userValidators.js";
 
 
@@ -24,6 +24,8 @@ userRouter.post("/reset-password", resetPassword);
 
 // Route to get user dashboard data
 userRouter.get("/dashboard", getDashboardData);
+
+userRouter.post("/search", searchWeather);
 
 
 

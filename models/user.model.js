@@ -41,6 +41,12 @@ const UserSchema = new mongoose.Schema({
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   weatherData: WeatherDataSchema,
+  searchHistory: [
+    {
+      query: { type: String, required: true },
+      searchedAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 const UserModel = mongoose.model("User", UserSchema);

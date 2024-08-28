@@ -430,3 +430,46 @@ export const resetPassword = async (req, res) => {
     );
   }
 };
+
+
+
+/**
+ * Controller function that monitor search history.
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} The response object.
+ */
+
+export const searchWeather = tryCatchLib(async (req, res) => {
+  const { email, searchQuery } = req.body;
+  
+  try {
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
+    }
+
+    // Fetch weather data based on the search query
+    const weatherResponse = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(searchQuery)}&appid=${CURRENT_WEATHER_API_KEY}`
+    );
+
+    const weatherData = weatherResponse.data;
+
+    // Update the user's search history
+    user.searchHistory.push({ query: searchQuery });
+    await user.save();
+
+    // Respond with the weather data
+    return successResponse(
+      res,
+      "Weather data retrieved successfully",
+      weatherData,
+      StatusCodes.OK
+    );
+  } catch (error) {
+    console.error("Error during weather search:", error);
+    return errorResponse(res, "Failed to retrieve weather data", StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+});
