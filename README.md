@@ -338,10 +338,6 @@ The User Management System with Weather Integration provides functionalities for
         }
         ```
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -351,4 +347,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For any questions or support, please contact:
 
 - **Email:** adeoluamole@gmail.com
-- **GitHub Issues:** [GitHub Issues](https://github.com/AdeAdex/user-management-system/issues)
+- **GitHub Issues:** [GitHub Issues](https://github.com/AdeAdex)
