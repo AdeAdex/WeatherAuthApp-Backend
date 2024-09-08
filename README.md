@@ -350,5 +350,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For any questions or support, please contact:
 
-- **Email:** support@example.com
-- **GitHub Issues:** [GitHub Issues](https://github.com/yourusername/user-management-system/issues)
+- **Email:** adeoluamole@gmail.com
+- **GitHub Issues:** [GitHub Issues](https://github.com/AdeAdex/user-management-system/issues)
