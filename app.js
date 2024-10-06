@@ -13,7 +13,7 @@ import helmet from "helmet"; // Import helmet for security
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173"], // Update with your frontend URL
+  origin: ["http://localhost:5173", "https://afro-centeric-weather-app.vercel.app"], // Update with your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Enable credentials (cookies, authorization headers, etc.)
