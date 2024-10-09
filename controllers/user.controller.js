@@ -177,7 +177,7 @@ export const loginUser = tryCatchLib(async (req, res) => {
 
 
 export const getDashboardData = async (req, res) => {
-  const token = req.query.token;
+  const token = req.query.token; 
   const { currentCity } = req.body; // Get the currentCity from the request body
 
   if (!token) {
@@ -211,6 +211,10 @@ export const getDashboardData = async (req, res) => {
     if (!user) {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
+
+    // Update the user's city in the database
+    user.city = currentCity; // Set the user's city to the currentCity
+    await user.save(); // Save the updated user data
 
     // Fetch current weather and forecast data for the currentCity
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
@@ -269,6 +273,7 @@ export const getDashboardData = async (req, res) => {
     );
   }
 };
+
 
 
 // export const getDashboardData = async (req, res) => {
