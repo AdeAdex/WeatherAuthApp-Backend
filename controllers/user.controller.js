@@ -23,7 +23,8 @@ const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
 const FORECAST_API_KEY = process.env.FORECAST_API_KEY;
 
 export const createNewUser = tryCatchLib(async (req, res) => {
-  const { firstName, lastName, email, city, password, unit } = req.body;
+  const { firstName, lastName, email, city, password } = req.body;
+  const unit = "metric"
 
   try {
     // Check if the user already exists
@@ -212,10 +213,7 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
-    // Update the user's city in the database
-    user.city = currentCity; // Set the user's city to the currentCity
-    await user.save(); // Save the updated user data
-
+   
     // Fetch current weather and forecast data for the currentCity
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
       axios.get(
