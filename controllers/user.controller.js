@@ -159,9 +159,9 @@ export const loginUser = tryCatchLib(async (req, res) => {
         // email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        city: user.city,
-        searchHistory: user.searchHistory,
-        weatherData: user.weatherData,
+        // city: user.city,
+        // searchHistory: user.searchHistory,
+        // weatherData: user.weatherData,
       },
     },
     StatusCodes.OK
@@ -175,8 +175,10 @@ export const loginUser = tryCatchLib(async (req, res) => {
  * @returns {Object} The response object.
  */
 
+
 export const getDashboardData = async (req, res) => {
   const token = req.query.token;
+  const { currentCity } = req.body; // Get the currentCity from the request body
 
   if (!token) {
     return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
@@ -184,7 +186,7 @@ export const getDashboardData = async (req, res) => {
 
   try {
     const decodedToken = await verifyToken(token);
-      console.log("decoded token",decodedToken)
+    console.log("decoded token", decodedToken);
 
     if (!decodedToken) {
       return errorResponse(
@@ -197,13 +199,11 @@ export const getDashboardData = async (req, res) => {
     // Check if the token has expired
     const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 
-    //   console.log("time", currentTime)
     if (decodedToken.exp < currentTime) {
       return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
     }
 
-
-    let email = decodedToken.email
+    const email = decodedToken.email;
 
     // Fetch user data from the database
     const user = await UserModel.findOne({ email }).select("-password");
@@ -212,15 +212,46 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
+    // Fetch current weather and forecast data for the currentCity
+    const [currentWeatherResponse, forecastResponse] = await Promise.all([
+      axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+          currentCity
+        )}&appid=${CURRENT_WEATHER_API_KEY}&units=metric` // Adjust units if necessary
+      ),
+      axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
+          currentCity
+        )}&appid=${FORECAST_API_KEY}&units=metric` // Adjust units if necessary
+      ),
+    ]);
+
+    // Extract data from responses
+    const currentWeather = currentWeatherResponse.data;
+    const forecastList = forecastResponse.data.list;
+
+    // Extract and attach icon URL to current weather
+    const currentWeatherIconId = currentWeather.weather[0].icon;
+    currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
+
+    // Attach icon URL to each forecast entry
+    const forecastWithIcons = forecastList.map((forecast) => {
+      forecast.weather = forecast.weather.map((weather) => ({
+        ...weather,
+        iconUrl: `https://openweathermap.org/img/wn/${weather.icon}@2x.png`,
+      }));
+      return forecast;
+    });
+
     // Example of additional data you might include in the dashboard
     const dashboardData = {
       userInfo: user,
-//       recentActivities: [], // Populate this with real data
-//       notifications: [], // Populate this with real data
-//       stats: {
-//         totalLogins: 50, // Example stat
-//         activeSessions: 3, // Example stat
-//       },
+      weatherData: {
+        currentWeather,
+        forecast: forecastWithIcons,
+        weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
+      },
+      // Add other dashboard-related data as needed
     };
 
     // Send the response with the collected dashboard data
@@ -230,13 +261,79 @@ export const getDashboardData = async (req, res) => {
       dashboardData
     );
   } catch (error) {
+    console.error("Error retrieving dashboard data:", error); // Log the error for debugging
     return errorResponse(
       res,
-      "Invalid or expired token",
-      StatusCodes.UNAUTHORIZED
+      "An error occurred while retrieving dashboard data",
+      StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
 };
+
+
+// export const getDashboardData = async (req, res) => {
+//   const token = req.query.token;
+//   const { currentCity } = req.body;
+
+//   if (!token) {
+//     return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
+//   }
+
+//   try {
+//     const decodedToken = await verifyToken(token);
+//       console.log("decoded token",decodedToken)
+
+//     if (!decodedToken) {
+//       return errorResponse(
+//         res,
+//         "Invalid token or token has expired",
+//         StatusCodes.UNAUTHORIZED
+//       );
+//     }
+
+//     // Check if the token has expired
+//     const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+
+//     //   console.log("time", currentTime)
+//     if (decodedToken.exp < currentTime) {
+//       return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
+//     }
+
+
+//     let email = decodedToken.email
+
+//     // Fetch user data from the database
+//     const user = await UserModel.findOne({ email }).select("-password");
+
+//     if (!user) {
+//       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
+//     }
+
+//     // Example of additional data you might include in the dashboard
+//     const dashboardData = {
+//       userInfo: user,
+// //       recentActivities: [], // Populate this with real data
+// //       notifications: [], // Populate this with real data
+// //       stats: {
+// //         totalLogins: 50, // Example stat
+// //         activeSessions: 3, // Example stat
+// //       },
+//     };
+
+//     // Send the response with the collected dashboard data
+//     return successResponse(
+//       res,
+//       "Dashboard data retrieved successfully",
+//       dashboardData
+//     );
+//   } catch (error) {
+//     return errorResponse(
+//       res,
+//       "Invalid or expired token",
+//       StatusCodes.UNAUTHORIZED
+//     );
+//   }
+// };
 
 /**
  * Controller function to handle password reset request.
