@@ -160,9 +160,9 @@ export const loginUser = tryCatchLib(async (req, res) => {
         // email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        // city: user.city,
-        // searchHistory: user.searchHistory,
-        // weatherData: user.weatherData,
+        city: user.city,
+        searchHistory: user.searchHistory,
+        weatherData: user.weatherData,
       },
     },
     StatusCodes.OK
