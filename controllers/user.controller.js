@@ -23,7 +23,7 @@ const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
 const FORECAST_API_KEY = process.env.FORECAST_API_KEY;
 
 export const createNewUser = tryCatchLib(async (req, res) => {
-  const { firstName, lastName, email, city, password } = req.body;
+  const { firstName, lastName, email, city, password, unit } = req.body;
 
   try {
     // Check if the user already exists
@@ -41,12 +41,12 @@ export const createNewUser = tryCatchLib(async (req, res) => {
       axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
           city
-        )}&appid=${CURRENT_WEATHER_API_KEY}`
+        )}&appid=${CURRENT_WEATHER_API_KEY}&units=${unit}`
       ),
       axios.get(
         `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
           city
-        )}&appid=${FORECAST_API_KEY}`
+        )}&appid=${FORECAST_API_KEY}&units=${unit}`
       ),
     ]);
 
@@ -94,16 +94,16 @@ export const createNewUser = tryCatchLib(async (req, res) => {
     return successResponse(
       res,
       "Registration successful",
-      //       {
-      //         user: {
-      //           id: newUser._id,
-      //           email: newUser.email,
-      //           firstName: newUser.firstName,
-      //           lastName: newUser.lastName,
-      //           city: newUser.city,
-      //           weatherData: newUser.weatherData,
-      //         },
-      //       },
+            {
+              user: {
+                id: newUser._id,
+                email: newUser.email,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                city: newUser.city,
+                weatherData: newUser.weatherData,
+              },
+            },
       StatusCodes.CREATED
     );
   } catch (error) {
