@@ -21,10 +21,11 @@ import { generateToken, verifyToken } from "../utils/lib/userJwtUtils.js";
 
 const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
 const FORECAST_API_KEY = process.env.FORECAST_API_KEY;
+const unit = "metric"
 
 export const createNewUser = tryCatchLib(async (req, res) => {
   const { firstName, lastName, email, city, password } = req.body;
-  const unit = "metric"
+  
 
   try {
     // Check if the user already exists
