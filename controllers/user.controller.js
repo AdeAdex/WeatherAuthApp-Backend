@@ -210,7 +210,12 @@ export const getDashboardData = async (req, res) => {
     }
 
     // Use the city from the request body if provided, otherwise fallback to user's city
-    const { city } = req.body || user.city; 
+    let { city } = req.body;
+    
+    // If no city is provided or city is undefined, use user's city
+    if (!city || city === undefined) {
+      city = user.city;
+    }
 
     if (!city) {
       return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
@@ -272,13 +277,13 @@ export const getDashboardData = async (req, res) => {
     // Send the response with the collected dashboard data
     return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
   } catch (error) {
-    console.error("Error retrieving dashboard data:", error); 
+    console.error("Error retrieving dashboard data:", error);
     return errorResponse(
       res,
-      `An error occurred while retrieving dashboard data: ${error.message}`, 
+      `An error occurred while retrieving dashboard data: ${error.message}`,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-}
+  }
 };
 
 
