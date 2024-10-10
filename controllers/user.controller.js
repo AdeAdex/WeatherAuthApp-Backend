@@ -274,7 +274,7 @@ export const getDashboardData = async (req, res) => {
       // weatherData,
     };
 
-    console.log("dash", dashboardData)
+    // console.log("dash", dashboardData)
 
     // Send the response with the collected dashboard data
     return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
