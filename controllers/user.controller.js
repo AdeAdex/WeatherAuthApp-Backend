@@ -266,10 +266,10 @@ export const getDashboardData = async (req, res) => {
     // Send the response with the collected dashboard data
     return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
   } catch (error) {
-    console.error("Error retrieving dashboard data:", error); // Log the error for debugging
+    console.error("Error retrieving dashboard data:", error); 
     return errorResponse(
       res,
-      `An error occurred while retrieving dashboard data: ${error.message}`, // Include the error message in the response
+      `An error occurred while retrieving dashboard data: ${error.message}`, 
       StatusCodes.INTERNAL_SERVER_ERROR
     );
 }
