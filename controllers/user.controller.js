@@ -164,8 +164,8 @@ export const loginUser = tryCatchLib(async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         city: user.city,
-        searchHistory: user.searchHistory,
-        weatherData: user.weatherData,
+        // searchHistory: user.searchHistory,
+        // weatherData: user.weatherData,
       },
     },
     StatusCodes.OK
