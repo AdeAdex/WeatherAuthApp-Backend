@@ -182,7 +182,6 @@ export const loginUser = tryCatchLib(async (req, res) => {
 
 export const getDashboardData = async (req, res) => {
   const token = req.query.token;
-  const { city } = req.body; // Get the currentCity from the request body
 
   if (!token) {
     return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
@@ -208,6 +207,13 @@ export const getDashboardData = async (req, res) => {
 
     if (!user) {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
+    }
+
+    // Use the city from the request body if provided, otherwise fallback to user's city
+    const { city } = req.body || user.city; 
+
+    if (!city) {
+      return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
     }
 
     // First, fetch current weather and forecast data for the city
