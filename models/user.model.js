@@ -2,6 +2,20 @@
 
 import mongoose from "mongoose";
 
+// WeatherSearchHistory schema for recording each search
+const WeatherSearchHistorySchema = new mongoose.Schema({
+  city: { type: String, required: true },
+  country: { type: String, required: true },
+  searchedAt: { type: Date, default: Date.now },
+  weatherData: {
+    windSpeed: { type: Number },
+    humidity: { type: Number },
+    pressure: { type: Number },
+    clouds: { type: Number },
+    temperature: { type: Number },
+  },
+});
+
 // Forecast schema for weather forecast data
 const ForecastSchema = new mongoose.Schema({
   dt: { type: Number, required: true },
@@ -71,6 +85,7 @@ const UserSchema = new mongoose.Schema({
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   weatherData: WeatherDataSchema, // Include weatherData with air pollution
+  weatherSearchHistory: [WeatherSearchHistorySchema],
   searchHistory: [
     {
       query: { type: String, required: true },

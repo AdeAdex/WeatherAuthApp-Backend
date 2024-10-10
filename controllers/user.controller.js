@@ -194,25 +194,20 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "Invalid token or token has expired", StatusCodes.UNAUTHORIZED);
     }
 
-    // Check if the token has expired
-    const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+    const currentTime = Date.now() / 1000;
     if (decodedToken.exp < currentTime) {
       return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
     }
 
     const email = decodedToken.email;
 
-    // Fetch user data from the database
     const user = await UserModel.findOne({ email }).select("-password");
 
     if (!user) {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
-    // Use the city from the request body if provided, otherwise fallback to user's city
     let { city } = req.body;
-
-    // If no city is provided or city is undefined, use user's city
     if (!city || city === undefined) {
       city = user.city;
     }
@@ -221,33 +216,21 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
     }
 
-    // First, fetch current weather and forecast data for the city
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
-      axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`
-      ),
-      axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${FORECAST_API_KEY}&units=metric`
-      ),
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`),
+      axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${FORECAST_API_KEY}&units=metric`),
     ]);
 
-    // Extract data from responses
     const currentWeather = currentWeatherResponse.data;
     const forecastList = forecastResponse.data.list;
 
-    // Fetch air pollution data using latitude and longitude from currentWeather
     const { lat, lon } = currentWeather.coord;
     const airPollutionResponse = await axios.get(
       `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${AIR_POLLUTION_API_KEY}`
     );
-
     const airPollutionData = airPollutionResponse.data;
 
-    // Attach icon URL to current weather
-    const currentWeatherIconId = currentWeather.weather[0].icon;
-    currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
-
-    // Attach icon URL to each forecast entry
+    currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@2x.png`;
     const forecastWithIcons = forecastList.map((forecast) => {
       forecast.weather = forecast.weather.map((weather) => ({
         ...weather,
@@ -256,7 +239,6 @@ export const getDashboardData = async (req, res) => {
       return forecast;
     });
 
-    // Prepare the weather data
     const weatherData = {
       currentWeather,
       forecast: forecastWithIcons,
@@ -264,22 +246,37 @@ export const getDashboardData = async (req, res) => {
       weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
     };
 
-    // Save the weather data to the user model
     user.weatherData = weatherData;
+
+    // If the searched city is different from the user's default city, save it in the search history
+    if (city !== user.city) {
+      const weatherSearchRecord = {
+        city,
+        country: currentWeather.sys.country,
+        weatherData: {
+          windSpeed: currentWeather.wind.speed,
+          humidity: currentWeather.main.humidity,
+          pressure: currentWeather.main.pressure,
+          clouds: currentWeather.clouds.all,
+          temperature: currentWeather.main.temp,
+        },
+      };
+      user.weatherSearchHistory.push(weatherSearchRecord);
+    }
+
     await user.save();
 
-    // Prepare a simplified user object without weatherData for the response
     const userInfo = {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      city: user.city
+      city: user.city,
     };
 
-    // Send the response with user and weatherData separately
     return successResponse(res, "Dashboard data retrieved successfully", {
-      userInfo, // Contains user data
-      weatherData, // Contains weather data (currentWeather, forecast, airPollution, etc.)
+      userInfo,
+      weatherData,
+      weatherSearchHistory: user.weatherSearchHistory,
     });
   } catch (error) {
     console.error("Error retrieving dashboard data:", error);
@@ -290,6 +287,7 @@ export const getDashboardData = async (req, res) => {
     );
   }
 };
+
 
 
 
