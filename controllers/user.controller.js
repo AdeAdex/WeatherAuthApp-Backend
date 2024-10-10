@@ -211,7 +211,7 @@ export const getDashboardData = async (req, res) => {
 
     // Use the city from the request body if provided, otherwise fallback to user's city
     let { city } = req.body;
-    
+
     // If no city is provided or city is undefined, use user's city
     if (!city || city === undefined) {
       city = user.city;
@@ -235,7 +235,7 @@ export const getDashboardData = async (req, res) => {
     const currentWeather = currentWeatherResponse.data;
     const forecastList = forecastResponse.data.list;
 
-    // Now, fetch air pollution data using latitude and longitude from currentWeather
+    // Fetch air pollution data using latitude and longitude from currentWeather
     const { lat, lon } = currentWeather.coord;
     const airPollutionResponse = await axios.get(
       `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${AIR_POLLUTION_API_KEY}`
@@ -256,7 +256,7 @@ export const getDashboardData = async (req, res) => {
       return forecast;
     });
 
-    // Prepare the weather data to be saved
+    // Prepare the weather data
     const weatherData = {
       currentWeather,
       forecast: forecastWithIcons,
@@ -268,16 +268,19 @@ export const getDashboardData = async (req, res) => {
     user.weatherData = weatherData;
     await user.save();
 
-    // Prepare the dashboard data to be sent as a response
-    const dashboardData = {
-      userInfo: user,
-      // weatherData,
+    // Prepare a simplified user object without weatherData for the response
+    const userInfo = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      city: user.city
     };
 
-    // console.log("dash", dashboardData)
-
-    // Send the response with the collected dashboard data
-    return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
+    // Send the response with user and weatherData separately
+    return successResponse(res, "Dashboard data retrieved successfully", {
+      userInfo, // Contains user data
+      weatherData, // Contains weather data (currentWeather, forecast, airPollution, etc.)
+    });
   } catch (error) {
     console.error("Error retrieving dashboard data:", error);
     return errorResponse(
@@ -287,6 +290,7 @@ export const getDashboardData = async (req, res) => {
     );
   }
 };
+
 
 
 
