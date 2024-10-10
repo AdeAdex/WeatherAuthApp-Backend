@@ -271,8 +271,10 @@ export const getDashboardData = async (req, res) => {
     // Prepare the dashboard data to be sent as a response
     const dashboardData = {
       userInfo: user,
-      weatherData, // Including currentWeather, forecast, airPollution, and weatherMapUrl
+      // weatherData,
     };
+
+    console.log("dash", dashboardData)
 
     // Send the response with the collected dashboard data
     return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
