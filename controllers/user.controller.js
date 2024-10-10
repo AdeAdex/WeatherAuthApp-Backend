@@ -39,35 +39,35 @@ export const createNewUser = tryCatchLib(async (req, res) => {
     }
 
     // Fetch current weather and forecast data concurrently
-    const [currentWeatherResponse, forecastResponse] = await Promise.all([
-      axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-          city
-        )}&appid=${CURRENT_WEATHER_API_KEY}&units=${unit}`
-      ),
-      axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-          city
-        )}&appid=${FORECAST_API_KEY}&units=${unit}`
-      ),
-    ]);
+    // const [currentWeatherResponse, forecastResponse] = await Promise.all([
+    //   axios.get(
+    //     `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+    //       city
+    //     )}&appid=${CURRENT_WEATHER_API_KEY}&units=${unit}`
+    //   ),
+    //   axios.get(
+    //     `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
+    //       city
+    //     )}&appid=${FORECAST_API_KEY}&units=${unit}`
+    //   ),
+    // ]);
 
-    // Extract data from responses
-    const currentWeather = currentWeatherResponse.data;
-    const forecastList = forecastResponse.data.list;
+    // // Extract data from responses
+    // const currentWeather = currentWeatherResponse.data;
+    // const forecastList = forecastResponse.data.list;
 
-    // Extract and attach icon URL to current weather
-    const currentWeatherIconId = currentWeather.weather[0].icon;
-    currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
+    // // Extract and attach icon URL to current weather
+    // const currentWeatherIconId = currentWeather.weather[0].icon;
+    // currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
 
-    // Attach icon URL to each forecast entry
-    const forecastWithIcons = forecastList.map((forecast) => {
-      forecast.weather = forecast.weather.map((weather) => ({
-        ...weather,
-        iconUrl: `https://openweathermap.org/img/wn/${weather.icon}@2x.png`,
-      }));
-      return forecast;
-    });
+    // // Attach icon URL to each forecast entry
+    // const forecastWithIcons = forecastList.map((forecast) => {
+    //   forecast.weather = forecast.weather.map((weather) => ({
+    //     ...weather,
+    //     iconUrl: `https://openweathermap.org/img/wn/${weather.icon}@2x.png`,
+    //   }));
+    //   return forecast;
+    // });
 
     // Hash the user's password
     const hashedPassword = await hashPassword(password);
@@ -79,11 +79,11 @@ export const createNewUser = tryCatchLib(async (req, res) => {
       email,
       city,
       password: hashedPassword,
-      weatherData: {
-        currentWeather,
-        forecast: forecastWithIcons,
-        weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
-      },
+      // weatherData: {
+      //   currentWeather,
+      //   forecast: forecastWithIcons,
+      //   weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
+      // },
     };
 
     // Save the new user to the database
@@ -103,7 +103,7 @@ export const createNewUser = tryCatchLib(async (req, res) => {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 city: newUser.city,
-                weatherData: newUser.weatherData,
+                // weatherData: newUser.weatherData,
               },
             },
       StatusCodes.CREATED
