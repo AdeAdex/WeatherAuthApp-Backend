@@ -2,7 +2,7 @@ import { verifyToken } from "../utils/lib/userJwtUtils.js";
 
 export const requireAuth = (req, res, next) => {
   const BASE_URL  = process.env.BASE_URL
-  console.log(BASE_URL)
+  // console.log(BASE_URL)
   const token = req.headers.authorization?.split(" ")[1]; // Extract token from 'Bearer token'
 
   if (!token) {
