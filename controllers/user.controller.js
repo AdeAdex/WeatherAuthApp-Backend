@@ -21,7 +21,9 @@ import { generateToken, verifyToken } from "../utils/lib/userJwtUtils.js";
 
 const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
 const FORECAST_API_KEY = process.env.FORECAST_API_KEY;
-const unit = "metric"
+const AIR_POLLUTION_API_KEY = process.env.AIR_POLLUTION_API_KEY; 
+
+// const unit = "metric"
 
 export const createNewUser = tryCatchLib(async (req, res) => {
   const { firstName, lastName, email, city, password } = req.body;
@@ -179,8 +181,8 @@ export const loginUser = tryCatchLib(async (req, res) => {
 
 
 export const getDashboardData = async (req, res) => {
-  const token = req.query.token; 
-  const { currentCity } = req.body; // Get the currentCity from the request body
+  const token = req.query.token;
+  const { city } = req.body; // Get the currentCity from the request body
 
   if (!token) {
     return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
@@ -188,19 +190,13 @@ export const getDashboardData = async (req, res) => {
 
   try {
     const decodedToken = await verifyToken(token);
-    console.log("decoded token", decodedToken);
 
     if (!decodedToken) {
-      return errorResponse(
-        res,
-        "Invalid token or token has expired",
-        StatusCodes.UNAUTHORIZED
-      );
+      return errorResponse(res, "Invalid token or token has expired", StatusCodes.UNAUTHORIZED);
     }
 
     // Check if the token has expired
     const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-
     if (decodedToken.exp < currentTime) {
       return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
     }
@@ -214,18 +210,13 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
-   
-    // Fetch current weather and forecast data for the currentCity
+    // First, fetch current weather and forecast data for the city
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
       axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-          currentCity
-        )}&appid=${CURRENT_WEATHER_API_KEY}&units=metric` // Adjust units if necessary
+        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`
       ),
       axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-          currentCity
-        )}&appid=${FORECAST_API_KEY}&units=metric` // Adjust units if necessary
+        `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${FORECAST_API_KEY}&units=metric`
       ),
     ]);
 
@@ -233,7 +224,15 @@ export const getDashboardData = async (req, res) => {
     const currentWeather = currentWeatherResponse.data;
     const forecastList = forecastResponse.data.list;
 
-    // Extract and attach icon URL to current weather
+    // Now, fetch air pollution data using latitude and longitude from currentWeather
+    const { lat, lon } = currentWeather.coord;
+    const airPollutionResponse = await axios.get(
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${AIR_POLLUTION_API_KEY}`
+    );
+
+    const airPollutionData = airPollutionResponse.data;
+
+    // Attach icon URL to current weather
     const currentWeatherIconId = currentWeather.weather[0].icon;
     currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
 
@@ -246,32 +245,32 @@ export const getDashboardData = async (req, res) => {
       return forecast;
     });
 
-    // Example of additional data you might include in the dashboard
+    // Prepare the weather data to be saved
+    const weatherData = {
+      currentWeather,
+      forecast: forecastWithIcons,
+      airPollution: airPollutionData,
+      weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
+    };
+
+    // Save the weather data to the user model
+    user.weatherData = weatherData;
+    await user.save();
+
+    // Prepare the dashboard data to be sent as a response
     const dashboardData = {
       userInfo: user,
-      weatherData: {
-        currentWeather,
-        forecast: forecastWithIcons,
-        weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
-      },
-      // Add other dashboard-related data as needed
+      weatherData, // Including currentWeather, forecast, airPollution, and weatherMapUrl
     };
 
     // Send the response with the collected dashboard data
-    return successResponse(
-      res,
-      "Dashboard data retrieved successfully",
-      dashboardData
-    );
+    return successResponse(res, "Dashboard data retrieved successfully", dashboardData);
   } catch (error) {
     console.error("Error retrieving dashboard data:", error); // Log the error for debugging
-    return errorResponse(
-      res,
-      "An error occurred while retrieving dashboard data",
-      StatusCodes.INTERNAL_SERVER_ERROR
-    );
+    return errorResponse(res, "An error occurred while retrieving dashboard data", StatusCodes.INTERNAL_SERVER_ERROR);
   }
 };
+
 
 
 /**
