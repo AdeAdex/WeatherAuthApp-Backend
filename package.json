@@ -1,6 +1,6 @@
 {
   "name": "mubashiru",
-  "version": "1.0.0",
+  "version": "1.3.1",
   "description": "A Weather App application",
   "main": "index.js",
   "type": "module",

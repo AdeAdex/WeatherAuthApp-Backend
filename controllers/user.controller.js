@@ -181,25 +181,28 @@ export const loginUser = tryCatchLib(async (req, res) => {
 
 
 export const getDashboardData = async (req, res) => {
-  const token = req.query.token;
+  // const token = req.query.token;
 
-  if (!token) {
-    return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
-  }
+  // if (!token) {
+  //   return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
+  // }
+  
+  const { email } = req.user;
 
   try {
-    const decodedToken = await verifyToken(token);
+    // const decodedToken = await verifyToken(token);
 
-    if (!decodedToken) {
-      return errorResponse(res, "Invalid token or token has expired", StatusCodes.UNAUTHORIZED);
-    }
+    // if (!decodedToken) {
+    //   return errorResponse(res, "Invalid token or token has expired", StatusCodes.UNAUTHORIZED);
+    // }
 
-    const currentTime = Date.now() / 1000;
-    if (decodedToken.exp < currentTime) {
-      return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
-    }
+    // const currentTime = Date.now() / 1000;
+    // if (decodedToken.exp < currentTime) {
+    //   return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
+    // }
+    
 
-    const email = decodedToken.email;
+    // const email = decodedToken.email;
 
     const user = await UserModel.findOne({ email }).select("-password");
 

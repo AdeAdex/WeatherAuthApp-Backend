@@ -3,6 +3,7 @@
 import { Router } from "express";
 import { createNewUser, forgotPassword, getDashboardData, getSearchHistory, loginUser, resetPassword, saveSearchHistory, verifyResetPasswordToken } from "../controllers/user.controller.js";
 import { createUserValidation, loginValidation } from "../validators/userValidators.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 
 const userRouter = Router();
@@ -23,7 +24,7 @@ userRouter.get("/verify-reset-password-token", verifyResetPasswordToken);
 userRouter.post("/reset-password", resetPassword);
 
 // Route to get user dashboard data
-userRouter.get("/dashboard", getDashboardData);
+userRouter.get("/dashboard", requireAuth, getDashboardData);
 
 // Route to get a user's search history
 userRouter.get("/search-history/:email", getSearchHistory);

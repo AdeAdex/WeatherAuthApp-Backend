@@ -7,7 +7,7 @@ import connectDB from "./config/database.config.js";
 
 const PORT = process.env.PORT || 5500;
 const ENV = process.env.NODE_ENV || "development";
-const APP_VERSION = process.env.APP_VERSION || "1.0.0";
+const APP_VERSION = process.env.APP_VERSION || "1.3.1";
 
 const server = http.createServer(app);
 
