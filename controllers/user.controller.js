@@ -250,7 +250,7 @@ export const getDashboardData = async (req, res) => {
       weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
     };
 
-    user.weatherData = weatherData;
+    // user.weatherData = weatherData;
 
     // If the searched city is different from the user's default city, save it in the search history
     if (city !== user.city) {
