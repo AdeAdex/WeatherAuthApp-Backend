@@ -208,7 +208,7 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
-    let { city } = req.params;
+    let { city } = req.query; 
   //  if (!city || city === undefined) {
   //    city = user.city;
   //  }
