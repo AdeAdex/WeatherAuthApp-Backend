@@ -219,6 +219,7 @@ export const getDashboardData = async (req, res) => {
       return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
     }
 
+
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`),
       axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${FORECAST_API_KEY}&units=metric`),
@@ -277,8 +278,8 @@ export const getDashboardData = async (req, res) => {
     };
 
     return successResponse(res, "Dashboard data retrieved successfully", {
-      userInfo,
-      weatherData,
+      // userInfo,
+      // weatherData,
       weatherSearchHistory: user.weatherSearchHistory,
     });
   } catch (error) {
