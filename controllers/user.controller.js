@@ -278,8 +278,8 @@ export const getDashboardData = async (req, res) => {
     };
 
     return successResponse(res, "Dashboard data retrieved successfully", {
-      // userInfo,
-      // weatherData,
+      userInfo,
+      weatherData,
       weatherSearchHistory: user.weatherSearchHistory,
     });
   } catch (error) {
