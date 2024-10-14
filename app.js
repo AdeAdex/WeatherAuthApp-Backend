@@ -38,15 +38,21 @@ app.use(
 app.use("/api", route);
 
 // Index route
-// Index route
+
 app.get("/", (_req, res) => {
   const responseMessage = `
     Welcome to the Weather API Server.
     Version: ${process.env.APP_VERSION || "1.0.0"}
     Environment: ${process.env.NODE_ENV || "development"}
-    This API provides weather data and forecasts for various locations.
-    Developed by Adex.
-    Please refer to the documentation for available endpoints and usage.
+
+    This API provides comprehensive weather data and forecasts for various locations, including:
+      - **Current Weather**: Get real-time weather conditions such as temperature, humidity, wind speed, and weather descriptions.
+      - **5-Day Forecast**: Access 5-day weather predictions at 3-hour intervals, complete with detailed forecasts and icons.
+      - **Air Pollution Data**: Check real-time air quality information, including pollutant levels like PM2.5, PM10, and more.
+      - **Weather Icons**: Visual representation of current and forecasted weather using OpenWeatherMap icons.
+      - **Weather Map URL**: Direct link to weather map layers such as cloud coverage.
+
+    Developed by Adex. Please refer to the documentation for available endpoints and detailed usage instructions.
   `;
   successResponse(res, responseMessage, StatusCodes.OK);
 });
