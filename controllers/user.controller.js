@@ -209,9 +209,9 @@ export const getDashboardData = async (req, res) => {
     }
 
     let { city } = req.body;
-    if (!city || city === undefined) {
-      city = user.city;
-    }
+  //  if (!city || city === undefined) {
+  //    city = user.city;
+  //  }
 
     if (!city) {
       return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
