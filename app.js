@@ -13,7 +13,10 @@ import helmet from "helmet"; // Import helmet for security
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://afro-centeric-weather-app.vercel.app"], // Update with your frontend URL
+  origin: [
+    "http://localhost:5173",
+    "https://afro-centeric-weather-app.vercel.app",
+  ], // Update with your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Enable credentials (cookies, authorization headers, etc.)
@@ -38,7 +41,6 @@ app.use(
 app.use("/api", route);
 
 // Index route
-
 app.get("/", (_req, res) => {
   const responseMessage = `
     Welcome to the Weather API Server.
@@ -56,7 +58,6 @@ app.get("/", (_req, res) => {
   `;
   successResponse(res, responseMessage, StatusCodes.OK);
 });
-
 
 // Catch 404 errors and forward them to error handler
 app.use((_req, _res, next) => {
