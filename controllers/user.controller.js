@@ -20,8 +20,6 @@ import { generateToken, verifyToken } from "../utils/lib/userJwtUtils.js";
  */
 
 const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
-const FORECAST_API_KEY = process.env.FORECAST_API_KEY;
-const AIR_POLLUTION_API_KEY = process.env.AIR_POLLUTION_API_KEY; 
 
 // const unit = "metric"
 
@@ -222,7 +220,7 @@ export const getDashboardData = async (req, res) => {
 
     const [currentWeatherResponse, forecastResponse] = await Promise.all([
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`),
-      axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${FORECAST_API_KEY}&units=metric`),
+      axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${CURRENT_WEATHER_API_KEY}&units=metric`),
     ]);
 
     const currentWeather = currentWeatherResponse.data;
@@ -230,7 +228,7 @@ export const getDashboardData = async (req, res) => {
 
     const { lat, lon } = currentWeather.coord;
     const airPollutionResponse = await axios.get(
-      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${AIR_POLLUTION_API_KEY}`
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${CURRENT_WEATHER_API_KEY}`
     );
     const airPollutionData = airPollutionResponse.data;
 
