@@ -21,7 +21,6 @@ import { generateToken, verifyToken } from "../utils/lib/userJwtUtils.js";
 
 const CURRENT_WEATHER_API_KEY = process.env.CURRENT_WEATHER_API_KEY;
 
-// const unit = "metric"
 
 export const createNewUser = tryCatchLib(async (req, res) => {
   const { firstName, lastName, email, city, password } = req.body;
@@ -37,37 +36,7 @@ export const createNewUser = tryCatchLib(async (req, res) => {
         StatusCodes.CONFLICT
       );
     }
-
-    // Fetch current weather and forecast data concurrently
-    // const [currentWeatherResponse, forecastResponse] = await Promise.all([
-    //   axios.get(
-    //     `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-    //       city
-    //     )}&appid=${CURRENT_WEATHER_API_KEY}&units=${unit}`
-    //   ),
-    //   axios.get(
-    //     `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-    //       city
-    //     )}&appid=${FORECAST_API_KEY}&units=${unit}`
-    //   ),
-    // ]);
-
-    // // Extract data from responses
-    // const currentWeather = currentWeatherResponse.data;
-    // const forecastList = forecastResponse.data.list;
-
-    // // Extract and attach icon URL to current weather
-    // const currentWeatherIconId = currentWeather.weather[0].icon;
-    // currentWeather.iconUrl = `https://openweathermap.org/img/wn/${currentWeatherIconId}@2x.png`;
-
-    // // Attach icon URL to each forecast entry
-    // const forecastWithIcons = forecastList.map((forecast) => {
-    //   forecast.weather = forecast.weather.map((weather) => ({
-    //     ...weather,
-    //     iconUrl: `https://openweathermap.org/img/wn/${weather.icon}@2x.png`,
-    //   }));
-    //   return forecast;
-    // });
+   
 
     // Hash the user's password
     const hashedPassword = await hashPassword(password);
@@ -79,11 +48,6 @@ export const createNewUser = tryCatchLib(async (req, res) => {
       email,
       city,
       password: hashedPassword,
-      // weatherData: {
-      //   currentWeather,
-      //   forecast: forecastWithIcons,
-      //   weatherMapUrl: `https://tile.openweathermap.org/map/clouds/10/10/10.png?appid=${CURRENT_WEATHER_API_KEY}`,
-      // },
     };
 
     // Save the new user to the database
@@ -103,7 +67,6 @@ export const createNewUser = tryCatchLib(async (req, res) => {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 city: newUser.city,
-                // weatherData: newUser.weatherData,
               },
             },
       StatusCodes.CREATED
@@ -158,12 +121,9 @@ export const loginUser = tryCatchLib(async (req, res) => {
       token,
       user: {
         id: user._id,
-        // email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         city: user.city,
-        // searchHistory: user.searchHistory,
-        // weatherData: user.weatherData,
       },
     },
     StatusCodes.OK
@@ -179,39 +139,17 @@ export const loginUser = tryCatchLib(async (req, res) => {
 
 
 export const getDashboardData = async (req, res) => {
-  // const token = req.query.token;
-
-  // if (!token) {
-  //   return errorResponse(res, "Token is required", StatusCodes.BAD_REQUEST);
-  // }
   
   const { email } = req.user;
 
   try {
-    // const decodedToken = await verifyToken(token);
-
-    // if (!decodedToken) {
-    //   return errorResponse(res, "Invalid token or token has expired", StatusCodes.UNAUTHORIZED);
-    // }
-
-    // const currentTime = Date.now() / 1000;
-    // if (decodedToken.exp < currentTime) {
-    //   return errorResponse(res, "Token has expired", StatusCodes.UNAUTHORIZED);
-    // }
-    
-
-    // const email = decodedToken.email;
-
-    const user = await UserModel.findOne({ email }).select("-password");
+       const user = await UserModel.findOne({ email }).select("-password");
 
     if (!user) {
       return errorResponse(res, "User not found", StatusCodes.NOT_FOUND);
     }
 
     let { city } = req.query; 
-  //  if (!city || city === undefined) {
-  //    city = user.city;
-  //  }
 
     if (!city) {
       return errorResponse(res, "City not provided or not found in user data", StatusCodes.BAD_REQUEST);
