@@ -275,7 +275,7 @@ export const getDashboardData = async (req, res) => {
       city: user.city,
     };
 
-    return successResponse(res, "Dashboard data retrieved successfully", {
+    return successResponse(res, `Welcome ${userInfo.firstName}`, {
       userInfo,
       weatherData,
       weatherSearchHistory: user.weatherSearchHistory,
